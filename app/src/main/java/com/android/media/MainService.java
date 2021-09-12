@@ -18,7 +18,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.IBinder;
 import android.provider.MediaStore;
-import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -26,6 +25,8 @@ import android.view.LayoutInflater;
 import android.view.TextureView;
 import android.view.View;
 import android.view.WindowManager;
+
+import androidx.annotation.RequiresApi;
 
 import java.io.File;
 import java.io.IOException;
@@ -221,7 +222,9 @@ public class MainService extends Service {
 
     private void initSdCard() {
         try {
-            if (!new File(PathUtils.getInstance().getRoot_path()).exists()) return;
+            if (!new File(PathUtils.getInstance().getRoot_path()).exists()) {
+                return;
+            }
             long freeSize = FileOper.getSDFreeSize(PathUtils.getInstance().getRoot_path());//MB
             long totalSize = FileOper.getSDAllSize(PathUtils.getInstance().getRoot_path());//MB
             Log.d(TAG, "[摄像头]----[内置存储]----[剩余容量]----" + freeSize + "/" + totalSize + "----" + CleanSDService.isCleanSD);
@@ -250,7 +253,9 @@ public class MainService extends Service {
      * 初始化摄像头
      */
     private void initCamera() {
-        if (NumCamera == 2) lys[3].setVisibility(View.GONE);
+        if (NumCamera == 2) {
+            lys[3].setVisibility(View.GONE);
+        }
 
         for (int i = 0; i < NumCamera; i++) {
             textureView[i] = view.findViewById(textureViewIds[i]);
@@ -271,7 +276,9 @@ public class MainService extends Service {
                                 e.printStackTrace();
                             }
                             try {
-                                if (mCamera[index] == null) return;
+                                if (mCamera[index] == null) {
+                                    return;
+                                }
 
                                 mCamera[index].setPreviewTexture(surface);
                                 supportedPictureSizes = mCamera[index].getParameters().getSupportedPictureSizes();//getSupportedPreviewSizes 不含720P
@@ -309,7 +316,9 @@ public class MainService extends Service {
                     Log.d(TAG, "[摄像头]----[onSurfaceTextureSizeChanged]----[摄像头变化]----" + width + ":" + height);
 
                     try {
-                        if (mCamera[index] == null) return;
+                        if (mCamera[index] == null) {
+                            return;
+                        }
 //                        mCamera[index].setPreviewDisplay(holder);
 //                        mCamera[index].startPreview();
                     } catch (Exception e) {
@@ -395,7 +404,9 @@ public class MainService extends Service {
      * 查看设置
      */
     private boolean isAollowSize(int index) {
-        if (supportedPictureSizes == null || supportedPictureSizes.size() == 0) return false;
+        if (supportedPictureSizes == null || supportedPictureSizes.size() == 0) {
+            return false;
+        }
         boolean b = false;
         for (int i = 0; i < supportedPictureSizes.size(); i++) {
             Camera.Size csize = supportedPictureSizes.get(i);
@@ -406,7 +417,9 @@ public class MainService extends Service {
 //            BcmLog.d(TAG, "[摄像头]----[initCamera]----[设备支持尺寸]----" + csize.width + "----" + csize.height);
         }
         //查找出最适合的 差异最小的
-        if (!b) getBestSupportedSize(index);
+        if (!b) {
+            getBestSupportedSize(index);
+        }
         return b;
     }
 
@@ -522,8 +535,9 @@ public class MainService extends Service {
 
                     if (data.length != VIDEO_HIGTH[index] * VIDEO_WIDTH[index] * 3 / 2) {//修改分辨率的某一瞬间会有数据不匹配
                         count++;
-                        if (count < 5)
+                        if (count < 5) {
                             Log.e(TAG, count + "[摄像头]----[音视频传输]----[onPreviewFrame]----" + index + " error data.length = " + VIDEO_HIGTH[index] + "----" + VIDEO_WIDTH[index] + "----" + data.length);
+                        }
                         return;
                     }
 
@@ -589,7 +603,9 @@ public class MainService extends Service {
             lys[i] = view.findViewById(lyids[i]);
         }
         for (int i = 0; i < lys.length; i++) {
-            if (i == 0 || i == 3) continue;
+            if (i == 0 || i == 3) {
+                continue;
+            }
             lys[i].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -694,7 +710,9 @@ public class MainService extends Service {
                 lys[3].setVisibility(View.GONE);
             }
         } else {//显示一路
-            if (logicChannel == -1) return;
+            if (logicChannel == -1) {
+                return;
+            }
             for (int i = 0; i < lys.length; i++) {
                 lys[i].setVisibility(View.GONE);
             }
@@ -782,7 +800,9 @@ public class MainService extends Service {
                 String action = intent.getAction();
                 if (CameraConstants.ACTION_FlOAT_WINDOWS.equals(action)) {
                     int windshow = intent.getIntExtra("window_1", -1);
-                    if (windshow == -1) return;
+                    if (windshow == -1) {
+                        return;
+                    }
                     if (windshow == 2) {
                         showWindow(windshow);
                         int logicChannel = intent.getIntExtra("logicChannel", 1);
@@ -824,19 +844,23 @@ public class MainService extends Service {
     public void startRecorder(final int logicChannel) {
 
         final int index = logicChannel - 1;
-        if (mCamera[index] == null) return;
+        if (mCamera[index] == null) {
+            return;
+        }
 
         try {
             int frameRate = CameraConstants.FRAMERATE;
             int bitRate = CameraConstants.BITRATE;
 
-            if (isRecording[index]) return;
+            if (isRecording[index]) {
+                return;
+            }
             isRecording[index] = true;
 
             mCamera[index].unlock();
             if (mediaRecorder[index] == null) {
                 mediaRecorder[index] = new MediaRecorder();
-                Log.e(TAG, "[摄像头]----[录像流程]----[mediaRecorder]----未创建");
+                Log.e(TAG, "[摄像头]----[录像流程]----[mediaRecorder]----未创建1");
             } else {
                 Log.e(TAG, "[摄像头]----[录像流程]----[mediaRecorder]----已创建");
             }

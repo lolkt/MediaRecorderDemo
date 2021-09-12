@@ -148,7 +148,9 @@ public class PathUtils {
                         File file = fs[i];
                         String name = file.getName();
                         String[] str = name.split("-");
-                        if (str.length < 3) continue;//命名过滤   1-190730183429-2.Mp4
+                        if (str.length < 3) {
+                            continue;//命名过滤   1-190730183429-2.Mp4
+                        }
                         Log.i(TAG, "查询照片文件 = " + name + "----");
                         if (name.endsWith("jpg")) {
                             int cid = Integer.parseInt(str[0]);
@@ -224,10 +226,16 @@ public class PathUtils {
                         File file = fs[i];
                         String name = file.getName();
                         String[] str = name.split("-");
-                        if (str.length < 4) continue;//命名过滤   1-190730183429-2.Mp4
+                        if (str.length < 4) {
+                            continue;//命名过滤   1-190730183429-2.Mp4
+                        }
 //                        BcmLog.i(TAG, "查询录像文件 = " + name + "----");
-                        if (name.contains("-lock") && islock == 0) continue;//锁 过滤
-                        if (!name.contains("-lock") && islock == 1) continue;//锁 过滤
+                        if (name.contains("-lock") && islock == 0) {
+                            continue;//锁 过滤
+                        }
+                        if (!name.contains("-lock") && islock == 1) {
+                            continue;//锁 过滤
+                        }
                         if (name.endsWith("mp4")) {
                             int cid = Integer.parseInt(str[0]);
                             int ctype = Integer.parseInt(str[2].replace(".mp4", ""));
@@ -275,7 +283,9 @@ public class PathUtils {
         try {
             List<File> filedata = SearchMp4File(stime, etime, cameraid);
             for (File file : filedata) {
-                if (file.getName().contains("lock")) continue;
+                if (file.getName().contains("lock")) {
+                    continue;
+                }
                 //加锁操作
                 String rename = file.getAbsolutePath().replace(".mp4", "-lock.mp4");
                 boolean b = file.renameTo(new File(rename));
@@ -313,9 +323,15 @@ public class PathUtils {
                         File file = fs[i];
                         String name = file.getName();
                         String[] str = name.split("-");
-                        if (str.length < 2) continue;//命名过滤
-                        if (name.contains("-lock") && islock == 0) continue;//锁 过滤
-                        if (!name.contains("-lock") && islock == 1) continue;//锁 过滤
+                        if (str.length < 2) {
+                            continue;//命名过滤
+                        }
+                        if (name.contains("-lock") && islock == 0) {
+                            continue;//锁 过滤
+                        }
+                        if (!name.contains("-lock") && islock == 1) {
+                            continue;//锁 过滤
+                        }
                         Log.i(TAG, "查询录音文件 = " + name + "----");
                         if (name.endsWith("wav")) {
                             int cid = Integer.parseInt(str[0]);
@@ -357,7 +373,9 @@ public class PathUtils {
         try {
             List<File> filedata = SearchWavFile(stime, etime, reason);
             for (File file : filedata) {
-                if (file.getName().contains("lock")) continue;
+                if (file.getName().contains("lock")) {
+                    continue;
+                }
                 //加锁操作
                 String rename = file.getAbsolutePath().replace(".wav", "-lock.wav");
                 file.renameTo(new File(rename));

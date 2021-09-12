@@ -75,7 +75,9 @@ public class CleanSDService extends IntentService {
                 //lastModified 按最后修改时间为序
                 for (int i = 0; i < mp4List.size(); i++) {//int i = mp4List.size()-1;i>=0;i--
                     File f = mp4List.get(i);
-                    if (f.getName().contains("-lock") && !isCleanLock) continue;
+                    if (f.getName().contains("-lock") && !isCleanLock) {
+                        continue;
+                    }
                     if (count1 < 8 && f.exists()) {
                         Log.e(TAG, "[摄像头]----[内置存储]----[删除容量]----视频删除：" + f.getName());
                         f.delete();
@@ -84,12 +86,16 @@ public class CleanSDService extends IntentService {
                     }
 //                    Thread.sleep(50);
                     count1++;
-                    if (count1 >= mp4List.size()) break;
+                    if (count1 >= mp4List.size()) {
+                        break;
+                    }
                 }
                 Log.d(TAG, "[摄像头]----[内置存储]----[删除容量]----视频完毕：" + mp4List.size());
                 for (int i = 0; i < wavList.size(); i++) {
                     File f = wavList.get(i);
-                    if (f.getName().contains("-lock") && !isCleanLock) continue;
+                    if (f.getName().contains("-lock") && !isCleanLock) {
+                        continue;
+                    }
                     if (count2 < 8 && f.exists()) {
                         f.delete();
                     } else {
@@ -97,12 +103,16 @@ public class CleanSDService extends IntentService {
                     }
 //                    Thread.sleep(50);
                     count2++;
-                    if (count2 >= wavList.size()) break;
+                    if (count2 >= wavList.size()) {
+                        break;
+                    }
                 }
                 Log.d(TAG, "[摄像头]----[内置存储]----[删除容量]----音频完毕：" + wavList.size());
                 for (int i = 0; i < picList.size(); i++) {
                     File f = picList.get(i);
-                    if (f.getName().contains("-lock") && !isCleanLock) continue;
+                    if (f.getName().contains("-lock") && !isCleanLock) {
+                        continue;
+                    }
                     if (count3 < 8 && f.exists()) {
                         f.delete();
                     } else {
@@ -110,7 +120,9 @@ public class CleanSDService extends IntentService {
                     }
 //                    Thread.sleep(50);
                     count3++;
-                    if (count3 >= picList.size()) break;
+                    if (count3 >= picList.size()) {
+                        break;
+                    }
                 }
                 Log.d(TAG, "[摄像头]----[内置存储]----[删除容量]----图片完毕：" + picList.size());
                 if (count1 + count2 + count3 < 4) {

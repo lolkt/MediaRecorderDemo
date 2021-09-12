@@ -2,30 +2,38 @@ package com.android.media;
 
 import android.Manifest;
 import android.content.Intent;
-import android.os.Build;
-import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 
 import com.android.media.MediaRecorder.MainService;
 import com.android.media.PreviewCallBack.MainService2;
 import com.android.media.SurfaceRecord.MainService3;
 
+import pub.devrel.easypermissions.EasyPermissions;
+
 public class MainActivity extends AppCompatActivity {
 
     private final int REQUEST_CODE_PERMISSIONS = 10;
+
+    private static final String[] permissions = new String[]{
+            Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initListener();
-
+        if (!EasyPermissions.hasPermissions(MainActivity.this, permissions)) {
+            EasyPermissions.requestPermissions(MainActivity.this, "请求拍摄", 1, permissions);
+            return;
+        }
         PathUtils.getInstance().initPath(MainActivity.this);
     }
-
 
 
     private void initListener() {
@@ -95,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(MainActivity.this, MainService2.class);
                     stopService(intent);
                 }
-                ShellUtils.execCommand(CameraConstants.KEY_CAMERA_RELEASE,false);
+                ShellUtils.execCommand(CameraConstants.KEY_CAMERA_RELEASE, false);
             }
         });
         findViewById(R.id.tv_3).setOnClickListener(new View.OnClickListener() {
@@ -113,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.tv_4).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this,MainActivity2.class).putExtra("time",System.currentTimeMillis()));
+                startActivity(new Intent(MainActivity.this, MainActivity2.class).putExtra("time", System.currentTimeMillis()));
             }
         });
 

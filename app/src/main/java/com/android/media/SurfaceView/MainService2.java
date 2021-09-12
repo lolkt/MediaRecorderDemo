@@ -11,25 +11,23 @@ import android.graphics.ImageFormat;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.graphics.SurfaceTexture;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
 import android.hardware.usb.UsbManager;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Build;
-import android.os.Handler;
 import android.os.IBinder;
 import android.provider.MediaStore;
-import android.support.annotation.RequiresApi;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.TextureView;
 import android.view.View;
 import android.view.WindowManager;
+
+import androidx.annotation.RequiresApi;
 
 import com.android.media.CameraConstants;
 import com.android.media.CleanSDService;
@@ -290,7 +288,9 @@ public class MainService2 extends Service {
 
     private void initSdCard() {
         try {
-            if (!new File(PathUtils.getInstance().getRoot_path()).exists()) return;
+            if (!new File(PathUtils.getInstance().getRoot_path()).exists()) {
+                return;
+            }
             long freeSize = FileOper.getSDFreeSize(PathUtils.getInstance().getRoot_path());//MB
             long totalSize = FileOper.getSDAllSize(PathUtils.getInstance().getRoot_path());//MB
             Log.d(TAG, "[摄像头]----[内置存储]----[剩余容量]----" + freeSize + "/" + totalSize + "----" + CleanSDService.isCleanSD);
@@ -319,7 +319,9 @@ public class MainService2 extends Service {
      * 初始化摄像头
      */
     private void initCamera() {
-        if (NumCamera == 2) lys[3].setVisibility(View.GONE);
+        if (NumCamera == 2) {
+            lys[3].setVisibility(View.GONE);
+        }
 
         for (int i = 0; i < NumCamera; i++) {
             textureView[i] = view.findViewById(textureViewIds[i]);
@@ -340,7 +342,9 @@ public class MainService2 extends Service {
                                 e.printStackTrace();
                             }
                             try {
-                                if (mCamera[index] == null) return;
+                                if (mCamera[index] == null) {
+                                    return;
+                                }
 
                                 mCamera[index].setPreviewDisplay(holder);
                                 supportedPictureSizes = mCamera[index].getParameters().getSupportedPictureSizes();//getSupportedPreviewSizes 不含720P
@@ -376,7 +380,9 @@ public class MainService2 extends Service {
                     Log.d(TAG, "[摄像头]----[onSurfaceTextureSizeChanged]----[摄像头变化]----" + width + ":" + height);
 
                     try {
-                        if (mCamera[index] == null) return;
+                        if (mCamera[index] == null) {
+                            return;
+                        }
 //                        mCamera[index].setPreviewDisplay(holder);
 //                        mCamera[index].startPreview();
                     } catch (Exception e) {
@@ -439,7 +445,9 @@ public class MainService2 extends Service {
      * 查看设置
      */
     private boolean isAollowSize(int index) {
-        if (supportedPictureSizes == null || supportedPictureSizes.size() == 0) return false;
+        if (supportedPictureSizes == null || supportedPictureSizes.size() == 0) {
+            return false;
+        }
         boolean b = false;
         for (int i = 0; i < supportedPictureSizes.size(); i++) {
             Camera.Size csize = supportedPictureSizes.get(i);
@@ -450,7 +458,9 @@ public class MainService2 extends Service {
 //            BcmLog.d(TAG, "[摄像头]----[initCamera]----[设备支持尺寸]----" + csize.width + "----" + csize.height);
         }
         //查找出最适合的 差异最小的
-        if (!b) getBestSupportedSize(index);
+        if (!b) {
+            getBestSupportedSize(index);
+        }
         return b;
     }
 
@@ -573,14 +583,14 @@ public class MainService2 extends Service {
                             public void run() {
                                 try {
                                     Log.e("-----", "-----帧画面缩放处理");
-                                    byte[] bytes = new byte[640*480*3/2];
+                                    byte[] bytes = new byte[640 * 480 * 3 / 2];
 //                                    byte[] bytes = new byte[1280 * 720 * 3 / 2];
                                     YuvUtil.yuvCompress(da, VIDEO_WIDTH[index], VIDEO_HIGTH[index], bytes, 480, 640, 0, 0, false);
 
-                                    byte[] bytes2 = new byte[640*480*3/2];
-                                    YuvUtil.yuvI420ToNV21(bytes,480, 640,bytes2);
+                                    byte[] bytes2 = new byte[640 * 480 * 3 / 2];
+                                    YuvUtil.yuvI420ToNV21(bytes, 480, 640, bytes2);
 
-                                    doByteToImage(System.currentTimeMillis()+"",bytes2);
+                                    doByteToImage(System.currentTimeMillis() + "", bytes2);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                     Log.e("-----", "-----" + e.getMessage());
@@ -701,7 +711,9 @@ public class MainService2 extends Service {
             lys[i] = view.findViewById(lyids[i]);
         }
         for (int i = 0; i < lys.length; i++) {
-            if (i == 0 || i == 3) continue;
+            if (i == 0 || i == 3) {
+                continue;
+            }
             lys[i].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -806,7 +818,9 @@ public class MainService2 extends Service {
                 lys[3].setVisibility(View.GONE);
             }
         } else {//显示一路
-            if (logicChannel == -1) return;
+            if (logicChannel == -1) {
+                return;
+            }
             for (int i = 0; i < lys.length; i++) {
                 lys[i].setVisibility(View.GONE);
             }
@@ -894,7 +908,9 @@ public class MainService2 extends Service {
                 String action = intent.getAction();
                 if (CameraConstants.ACTION_FlOAT_WINDOWS.equals(action)) {
                     int windshow = intent.getIntExtra("window_1", -1);
-                    if (windshow == -1) return;
+                    if (windshow == -1) {
+                        return;
+                    }
                     if (windshow == 2) {
                         showWindow(windshow);
                         int logicChannel = intent.getIntExtra("logicChannel", 1);
@@ -937,13 +953,17 @@ public class MainService2 extends Service {
     public void startRecorder(final int logicChannel) {
 
         final int index = logicChannel - 1;
-        if (mCamera[index] == null) return;
+        if (mCamera[index] == null) {
+            return;
+        }
 
         try {
             int frameRate = CameraConstants.FRAMERATE;
             int bitRate = CameraConstants.BITRATE;
 
-            if (isRecording[index]) return;
+            if (isRecording[index]) {
+                return;
+            }
             isRecording[index] = true;
 
             mCamera[index].unlock();
@@ -974,7 +994,7 @@ public class MainService2 extends Service {
 
             CamcorderProfile profile = CamcorderProfile.get(CamcorderProfile.QUALITY_720P);
             profile.videoFrameWidth = 1280;
-            profile.videoFrameHeight =  720;
+            profile.videoFrameHeight = 720;
             //录像和预览要一致
 //            mediaRecorder[index].setVideoSize(VIDEO_WIDTH[index], VIDEO_HIGTH[index]);
             Log.d(TAG, "[摄像头]----[录像流程]----[setVideoSize]----" + VIDEO_WIDTH[index] + ":" + VIDEO_HIGTH[index]);

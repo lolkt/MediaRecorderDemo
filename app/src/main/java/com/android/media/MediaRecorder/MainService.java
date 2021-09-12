@@ -22,7 +22,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.provider.MediaStore;
-import android.support.annotation.RequiresApi;
 
 import android.view.Display;
 import android.view.KeyEvent;
@@ -30,6 +29,8 @@ import android.view.LayoutInflater;
 import android.view.TextureView;
 import android.view.View;
 import android.view.WindowManager;
+
+import androidx.annotation.RequiresApi;
 
 import com.android.media.CameraConstants;
 import com.android.media.CleanSDService;
@@ -72,7 +73,7 @@ public class MainService extends Service {
     //路径管理工具
     private PathUtils pathUtils;
 
-    private int NumCamera = 4;
+    private int NumCamera = 2;
 
     //摄像头
     public Camera[] mCamera = new Camera[NumCamera];
@@ -208,18 +209,18 @@ public class MainService extends Service {
                         startRecorder(2);
                     }
                 },15*1000);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        startRecorder(3);
-                    }
-                },30*1000);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        startRecorder(4);
-                    }
-                },45*1000);
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        startRecorder(3);
+//                    }
+//                },30*1000);
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        startRecorder(4);
+//                    }
+//                },45*1000);
 //                ComThreadPool.execute(new Runnable() {
 //                    @Override
 //                    public void run() {
@@ -290,7 +291,9 @@ public class MainService extends Service {
 
     private void initSdCard() {
         try {
-            if (!new File(PathUtils.getInstance().getRoot_path()).exists()) return;
+            if (!new File(PathUtils.getInstance().getRoot_path()).exists()) {
+                return;
+            }
             long freeSize = FileOper.getSDFreeSize(PathUtils.getInstance().getRoot_path());//MB
             long totalSize = FileOper.getSDAllSize(PathUtils.getInstance().getRoot_path());//MB
             Log.d(TAG, "[摄像头]----[内置存储]----[剩余容量]----" + freeSize + "/" + totalSize + "----" + CleanSDService.isCleanSD);
@@ -319,7 +322,9 @@ public class MainService extends Service {
      * 初始化摄像头
      */
     private void initCamera() {
-        if (NumCamera == 2) lys[3].setVisibility(View.GONE);
+        if (NumCamera == 2) {
+            lys[3].setVisibility(View.GONE);
+        }
 
         for (int i = 0; i < NumCamera; i++) {
             textureView[i] = view.findViewById(textureViewIds[i]);
@@ -340,7 +345,9 @@ public class MainService extends Service {
                                 e.printStackTrace();
                             }
                             try {
-                                if (mCamera[index] == null) return;
+                                if (mCamera[index] == null) {
+                                    return;
+                                }
 
                                 mCamera[index].setPreviewTexture(surface);
                                 supportedPictureSizes = mCamera[index].getParameters().getSupportedPictureSizes();//getSupportedPreviewSizes 不含720P
@@ -377,7 +384,9 @@ public class MainService extends Service {
                     Log.d(TAG, "[摄像头]----[onSurfaceTextureSizeChanged]----[摄像头变化]----" + width + ":" + height);
 
                     try {
-                        if (mCamera[index] == null) return;
+                        if (mCamera[index] == null) {
+                            return;
+                        }
 //                        mCamera[index].setPreviewDisplay(holder);
 //                        mCamera[index].startPreview();
                     } catch (Exception e) {
@@ -446,7 +455,9 @@ public class MainService extends Service {
      * 查看设置
      */
     private boolean isAollowSize(int index) {
-        if (supportedPictureSizes == null || supportedPictureSizes.size() == 0) return false;
+        if (supportedPictureSizes == null || supportedPictureSizes.size() == 0) {
+            return false;
+        }
         boolean b = false;
         for (int i = 0; i < supportedPictureSizes.size(); i++) {
             Camera.Size csize = supportedPictureSizes.get(i);
@@ -457,7 +468,9 @@ public class MainService extends Service {
 //            BcmLog.d(TAG, "[摄像头]----[initCamera]----[设备支持尺寸]----" + csize.width + "----" + csize.height);
         }
         //查找出最适合的 差异最小的
-        if (!b) getBestSupportedSize(index);
+        if (!b) {
+            getBestSupportedSize(index);
+        }
         return b;
     }
 
@@ -708,7 +721,9 @@ public class MainService extends Service {
             lys[i] = view.findViewById(lyids[i]);
         }
         for (int i = 0; i < lys.length; i++) {
-            if (i == 0 || i == 3) continue;
+            if (i == 0 || i == 3) {
+                continue;
+            }
             lys[i].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -813,7 +828,9 @@ public class MainService extends Service {
                 lys[3].setVisibility(View.GONE);
             }
         } else {//显示一路
-            if (logicChannel == -1) return;
+            if (logicChannel == -1) {
+                return;
+            }
             for (int i = 0; i < lys.length; i++) {
                 lys[i].setVisibility(View.GONE);
             }
@@ -901,7 +918,9 @@ public class MainService extends Service {
                 String action = intent.getAction();
                 if (CameraConstants.ACTION_FlOAT_WINDOWS.equals(action)) {
                     int windshow = intent.getIntExtra("window_1", -1);
-                    if (windshow == -1) return;
+                    if (windshow == -1) {
+                        return;
+                    }
                     if (windshow == 2) {
                         showWindow(windshow);
                         int logicChannel = intent.getIntExtra("logicChannel", 1);
@@ -944,13 +963,17 @@ public class MainService extends Service {
     public void startRecorder(final int logicChannel) {
 
         final int index = logicChannel - 1;
-        if (mCamera[index] == null) return;
+        if (mCamera[index] == null) {
+            return;
+        }
 
         try {
             int frameRate = CameraConstants.FRAMERATE;
             int bitRate = CameraConstants.BITRATE;
 
-            if (isRecording[index]) return;
+            if (isRecording[index]) {
+                return;
+            }
             isRecording[index] = true;
 
             mCamera[index].unlock();

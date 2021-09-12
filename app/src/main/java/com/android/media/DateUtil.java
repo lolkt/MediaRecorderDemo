@@ -297,7 +297,7 @@ public class DateUtil {
 	 * @return
 	 */
 	public static String fixStringToSetLength(String oriStr, String fillChar, int setLength, boolean preFill) {
-		if(oriStr == null || fillChar.equals("")) {
+		if(oriStr == null || "".equals(fillChar)) {
 			return oriStr;
 		}
 
@@ -361,7 +361,7 @@ public class DateUtil {
 		Calendar   cal = Calendar.getInstance(); 
 		SimpleDateFormat sFmt = new SimpleDateFormat("yyMMddHHmmss"); 
 		cal.setTime(sFmt.parse( (StrDate), new ParsePosition(0))); 
-		cal.add(cal.HOUR,8); 
+		cal.add(Calendar.HOUR,8);
 		return sFmt.format(cal.getTime()); 
 	}
 
@@ -549,26 +549,29 @@ public class DateUtil {
 			Calendar objCalendarDate2 = Calendar.getInstance();
 			objCalendarDate2.setTime(date2);
 
-			if (objCalendarDate2.equals(objCalendarDate1))
-				return 0;
+			if (objCalendarDate2.equals(objCalendarDate1)) {
+                return 0;
+            }
 			if (objCalendarDate1.after(objCalendarDate2)) {
 				Calendar temp = objCalendarDate1;
 				objCalendarDate1 = objCalendarDate2;
 				objCalendarDate2 = temp;
 			}
 			if (objCalendarDate2.get(Calendar.DAY_OF_MONTH) < objCalendarDate1
-					.get(Calendar.DAY_OF_MONTH))
-				flag = 1;
+					.get(Calendar.DAY_OF_MONTH)) {
+                flag = 1;
+            }
 
 			if (objCalendarDate2.get(Calendar.YEAR) > objCalendarDate1
-					.get(Calendar.YEAR))
-				iMonth = ((objCalendarDate2.get(Calendar.YEAR) - objCalendarDate1
-						.get(Calendar.YEAR))
-						* 12 + objCalendarDate2.get(Calendar.MONTH) - flag)
-						- objCalendarDate1.get(Calendar.MONTH);
-			else
-				iMonth = objCalendarDate2.get(Calendar.MONTH)
-				- objCalendarDate1.get(Calendar.MONTH) - flag;
+					.get(Calendar.YEAR)) {
+                iMonth = ((objCalendarDate2.get(Calendar.YEAR) - objCalendarDate1
+                        .get(Calendar.YEAR))
+                        * 12 + objCalendarDate2.get(Calendar.MONTH) - flag)
+                        - objCalendarDate1.get(Calendar.MONTH);
+            } else {
+                iMonth = objCalendarDate2.get(Calendar.MONTH)
+                - objCalendarDate1.get(Calendar.MONTH) - flag;
+            }
 
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -128,7 +128,9 @@ public class surfaceRecord {
         format.setInteger(MediaFormat.KEY_BIT_RATE, bitRate);
         format.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE);
         format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, IFRAME_INTERVAL);
-        if (VERBOSE) Log.d(TAG, "format: " + format);
+        if (VERBOSE) {
+            Log.d(TAG, "format: " + format);
+        }
 
         // Create a MediaCodec encoder, and configure it with our format.  Get a Surface
         // we can use for input and wrap it with a class that handles the EGL work.
@@ -178,7 +180,9 @@ public class surfaceRecord {
      * Releases encoder resources.
      */
     private void releaseEncoder() {
-        if (VERBOSE) Log.d(TAG, "releasing encoder objects");
+        if (VERBOSE) {
+            Log.d(TAG, "releasing encoder objects");
+        }
         if (mEncoder != null) {
             mEncoder.stop();
             mEncoder.release();
@@ -189,7 +193,9 @@ public class surfaceRecord {
             mInputSurface = null;
         }
         if (mMuxer != null) {
-            if (VERBOSE) Log.d(TAG, "releasing mMuxer objects");
+            if (VERBOSE) {
+                Log.d(TAG, "releasing mMuxer objects");
+            }
             mMuxer.stop();
             mMuxer.release();
             mMuxer = null;
@@ -208,10 +214,14 @@ public class surfaceRecord {
      */
     public void drainEncoder(boolean endOfStream) {
         final int TIMEOUT_USEC = 10000;
-        if (VERBOSE) Log.d(TAG, "drainEncoder(" + endOfStream + ")");
+        if (VERBOSE) {
+            Log.d(TAG, "drainEncoder(" + endOfStream + ")");
+        }
 
         if (endOfStream) {
-            if (VERBOSE) Log.d(TAG, "sending EOS to encoder");
+            if (VERBOSE) {
+                Log.d(TAG, "sending EOS to encoder");
+            }
             mEncoder.signalEndOfInputStream();
         }
 
@@ -223,7 +233,9 @@ public class surfaceRecord {
                 if (!endOfStream) {
                     break;      // out of while
                 } else {
-                    if (VERBOSE) Log.d(TAG, "no output available, spinning to await EOS");
+                    if (VERBOSE) {
+                        Log.d(TAG, "no output available, spinning to await EOS");
+                    }
                 }
             } else if (encoderStatus == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
                 // not expected for an encoder
@@ -254,7 +266,9 @@ public class surfaceRecord {
                 if ((mBufferInfo.flags & MediaCodec.BUFFER_FLAG_CODEC_CONFIG) != 0) {
                     // The codec config data was pulled out and fed to the muxer when we got
                     // the INFO_OUTPUT_FORMAT_CHANGED status.  Ignore it.
-                    if (VERBOSE) Log.d(TAG, "ignoring BUFFER_FLAG_CODEC_CONFIG");
+                    if (VERBOSE) {
+                        Log.d(TAG, "ignoring BUFFER_FLAG_CODEC_CONFIG");
+                    }
                     mBufferInfo.size = 0;
                 }
 
@@ -268,7 +282,9 @@ public class surfaceRecord {
                     encodedData.limit(mBufferInfo.offset + mBufferInfo.size);
 
                     mMuxer.writeSampleData(mTrackIndex, encodedData, mBufferInfo);
-                    if (VERBOSE) Log.d(TAG, "sent " + mBufferInfo.size + " bytes to muxer");
+                    if (VERBOSE) {
+                        Log.d(TAG, "sent " + mBufferInfo.size + " bytes to muxer");
+                    }
                 }
 
                 mEncoder.releaseOutputBuffer(encoderStatus, false);
@@ -277,7 +293,9 @@ public class surfaceRecord {
                     if (!endOfStream) {
                         Log.w(TAG, "reached end of stream unexpectedly");
                     } else {
-                        if (VERBOSE) Log.d(TAG, "end of stream reached");
+                        if (VERBOSE) {
+                            Log.d(TAG, "end of stream reached");
+                        }
                     }
                     break;      // out of while
                 }
@@ -442,7 +460,9 @@ public class surfaceRecord {
             mTextureRender = new STextureRender();
             mTextureRender.surfaceCreated();
 
-            if (VERBOSE) Log.d(TAG, "textureID=" + mTextureRender.getTextureId());
+            if (VERBOSE) {
+                Log.d(TAG, "textureID=" + mTextureRender.getTextureId());
+            }
             mSurfaceTexture = new SurfaceTexture(mTextureRender.getTextureId());
 
             // This doesn't work if this object is created on the thread that CTS started for
@@ -521,7 +541,9 @@ public class surfaceRecord {
 
         @Override
         public void onFrameAvailable(SurfaceTexture st) {
-            if (VERBOSE) Log.d(TAG, "new frame available");
+            if (VERBOSE) {
+                Log.d(TAG, "new frame available");
+            }
             synchronized (mFrameSyncObject) {
                 if (mFrameAvailable) {
                     throw new RuntimeException("mFrameAvailable already set, frame could be dropped");

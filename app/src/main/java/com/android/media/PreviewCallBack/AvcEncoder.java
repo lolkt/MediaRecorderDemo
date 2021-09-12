@@ -44,7 +44,7 @@ public class AvcEncoder {
 
         m_width  = width;
         m_height = height;
-        if(path != null && !path.equals("")){
+        if(path != null && !"".equals(path)){
             ouputPath = path;
         }
         Log.v("xmc", "AvcEncoder:"+m_width+"+"+m_height);
@@ -67,7 +67,7 @@ public class AvcEncoder {
             e.printStackTrace();
         }
         mediaCodec.configure(mediaFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
-        presentationTimeUs = new Date().getTime() * 1000;
+        presentationTimeUs = System.currentTimeMillis()* 1000;
         try {
             mediaMuxer = new MediaMuxer(ouputPath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
         }catch(Exception e){
@@ -158,7 +158,7 @@ public class AvcEncoder {
                 inputBuffer.clear();
                 //inputBuffer.put(input);
                 inputBuffer.put(dstByte,0,dstByte.length);
-                long pts = new Date().getTime() * 1000 - presentationTimeUs;
+                long pts = System.currentTimeMillis() * 1000 - presentationTimeUs;
                 if(endOfStream){
                     mediaCodec.queueInputBuffer(inputBufferIndex, 0, 0, 0, MediaCodec.BUFFER_FLAG_END_OF_STREAM);
                 }else{
@@ -176,8 +176,9 @@ public class AvcEncoder {
                     if (encoderStatus == MediaCodec.INFO_TRY_AGAIN_LATER) {
                         // no output available yet
                         Log.d(TAG, "no output available, spinning to await EOS");
-                        if(mMuxerStarted)
+                        if(mMuxerStarted) {
                             break;
+                        }
 
                     } else if (encoderStatus == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
                         // not expected for an encoder
@@ -294,8 +295,8 @@ public class AvcEncoder {
                 mediaCodecInfo.getCapabilitiesForType("video/avc");
         for (int i = 0; i < codecCapabilities.colorFormats.length; i++) {
             int format = codecCapabilities.colorFormats[i];
-            if (format >= codecCapabilities.COLOR_FormatYUV420Planar &&
-                    format <= codecCapabilities.COLOR_FormatYUV420PackedSemiPlanar) {
+            if (format >= MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar &&
+                    format <= MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420PackedSemiPlanar) {
                 if (format >= matchedFormat) {
                     matchedFormat = format;
                     logColorFormatName(format);
@@ -322,6 +323,7 @@ public class AvcEncoder {
             case MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar:
                 Log.d(TAG, "COLOR_FormatYUV420SemiPlanar");
                 break;
+                default:
         }
     }
     private int calculateLength(int format) {
